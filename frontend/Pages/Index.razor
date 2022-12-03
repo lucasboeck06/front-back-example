@@ -1,18 +1,54 @@
 ﻿@page "/"
 
-<PageTitle>To Do List :) </PageTitle>
-<BSLabel>To do List:</BSLabel>
+<PageTitle>Lista de afazeres</PageTitle>
 
-<BSInput
-    placeholder="Escreva seu item a fazer..."
-    InputType="InputType.TextArea"
-    Value="@("")" />
+<div class="add-form">  
+    <BSLabel>Just do it:</BSLabel>
+    <BSInput @bind-Value="description"
+        placeholder="Escreva seu item a fazer, seu lixo humano..."
+        InputType="InputType.TextArea"/>
+    <BSLabel>Para:</BSLabel>
+    <BSInput
+        InputType="InputType.DateTimeLocal"
+       @bind-Value="deadline"/>
 
-<BSLabel>Para:</BSLabel>
-<BSInput
-    InputType="InputType.DateTimeLocal"
-    Value="@DateTime.Now" />
+   <BSButton Color="BSColor.Warning" IsOutlined="true" @onclick="OnAdd">
+        Adicionar
+    </BSButton>
+</div>
 
-<BSButton Color="BSColor.Warning">
-    Adicionar
-</BSButton>
+<div>
+    <BSAccordion>
+        @foreach (var todo in list)
+            {
+            <BSAccordionItem>
+                <Header>@todo.Descricao</Header>
+                <Content>
+                    <BSInputCheckbox 
+                        Value="@(!todo.Feito)">
+                        Está feito
+                    </BSInputCheckbox>
+                </Content>
+            </BSAccordionItem>
+            }
+    </BSAccordion>
+</div>
+
+@code {
+    List<ToDoElement> list = new List<ToDoElement>();
+    String description = "";
+    DateTime deadline = DateTime.Now;
+
+    public void OnAdd()
+    {
+        ToDoElement element = new ToDoElement();
+        element.Descricao = description;
+        element.Prazo = deadline;
+        element.Feito = false;
+        list.Add(element);
+
+        description = "";
+        deadline = DateTime.Now;
+        StateHasChanged();
+     }
+}
